@@ -1,21 +1,50 @@
-find_roots <- function(formula, intervalStart, intervalEnd) {
-  # first check if the intervalsthere is a root between the intervals
-  start_value <- eval(expr, envir = list(x = intervalStart))
-  end_value <- eval(expr, envir = list(x = intervalEnd))
-  
-  product <- start_value * end_value
-  if (product > 0) {
-    stop("No possible root in the given interval.")
+find_roots <- function(f, intervalStart, intervalEnd, iterations) {
+  s <- intervalStart
+  e <- intervalEnd
+  fs <- f(s)
+  fe <- f(e)
+  if (fs * fe > 0) {
+    stop("No roots in the given interval.")
   }
   
-  if (start_value == 0) {
-    return(intervalStart)
+  if (fs == 0) return(s)
+  if (fe == 0) return(e)
+  
+  for (i in 1:iterations) {
+    m <- (s + e) / 2
+    fm <- f(m)
+    
+    if (fm == 0) return(m)
+    
+    if (fs * fm < 0) {
+      e <- m
+      fe <- fm
+    } else {
+      s <- m
+      fs <- fm
+    }
   }
   
-  if (end_value == 0) {
-    return(intervalEnd)
-  }
-  
-  
-  
+  (s + e) / 2
 }
+
+
+run <- function() {
+  formula <- readline("Enter a function of x: ")
+  f <- parse(text = formula)[[1]]
+  
+  intervalStart <- as.numeric(readline("Enter interval start: "))
+  intervalEnd <- as.numeric(readline("Enter interval end: "))
+  iterations <- as.integer(readline("Enter number of iterations: "))
+  
+  result <- find_roots(
+    function(x) eval(f, envir = list(x = x)),
+    intervalStart,
+    intervalEnd,
+    iterations
+  )
+  
+  print(result)
+}
+
+run()
