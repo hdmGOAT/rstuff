@@ -1,0 +1,33 @@
+---
+title: "delmundo_ps3"
+author: "Hans Matthew E. Del Mundo"
+date: "2026-09-06"
+output: html_document
+---
+
+
+```{r}
+f1 <- function(x){
+  1-x^3
+}
+
+f2 <- function(x){
+(1 - x)^(1/3)
+}
+
+fixed_point <- function(g, initial, tol = 1e-6, max_iter = 1000) {
+  x <- initial
+  
+  for (i in 1:max_iter) {
+    x_new <- g(x)
+    
+    if (abs(x_new - x) < tol) {
+      return(list(status = "converges", root = x_new))
+    }
+    
+    x <- x_new
+  }
+  
+  return(list(status = "diverges", root = NULL))
+}
+```
