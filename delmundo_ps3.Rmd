@@ -22,12 +22,28 @@ fixed_point <- function(g, initial, tol = 1e-6, max_iter = 1000) {
     x_new <- g(x)
     
     if (abs(x_new - x) < tol) {
+      cat("The root converges.\n")
       return(list(status = "converges", root = x_new))
     }
     
     x <- x_new
   }
   
+  cat("The root diverges.\n")
   return(list(status = "diverges", root = NULL))
+}
+```
+
+```{r}
+run <- function() {
+  formula <- readline("Enter a function of x: ")
+  g <- parse(text = formula)[[1]]
+  initial <- as.numeric(readline("Enter initial value: "))
+
+  result <- fixed_point(
+    function(x) eval(g, envir = list(x = x)),
+    initial
+  )
+  print(result)
 }
 ```
