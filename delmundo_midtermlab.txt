@@ -1,0 +1,116 @@
+---
+title: "midterm_lab"
+author: "Hans Matthew E. Del Mundo"
+date: "2026-10-03"
+output: html_document
+---
+ 
+```{r}
+library(Deriv) # please run 'install.packages("Deriv")'
+ 
+rootfinder <- function(f, x0, decimal_places) {
+ 
+  df <- Deriv(f)
+  x1 <- x0 - f(x0) / df(x0)
+ 
+  cat("Iteration 1 - Newton's Method\n")
+  cat("x0 =", x0, "\n")
+  cat("x1 =", x1, "\n")
+ 
+  if (round(x1, decimal_places) == round(x0, decimal_places)) {
+ 
+    cat("Newton's method converged in the first iteration.\n")
+    cat("Root =", round(x1, decimal_places), "\n")
+ 
+    return(x1)
+  }
+ 
+  cat("Newton's method has not yet converged.\n")
+  cat("Continuing with the Secant Method.\n\n")
+ 
+  x_previous <- x0
+  x_current <- x1
+ 
+  iteration <- 2
+ 
+  while (round(x_current, decimal_places) !=
+         round(x_previous, decimal_places)) {
+ 
+    x_next <- x_current -
+      f(x_current) *
+      (x_current - x_previous) /
+      (f(x_current) - f(x_previous))
+ 
+    cat("Iteration", iteration, "- Secant Method\n")
+    cat("x =", x_next, "\n")
+ 
+    x_previous <- x_current
+    x_current <- x_next
+ 
+    iteration <- iteration + 1
+  }
+ 
+  cat("\nThe method has converged.\n")
+  cat("Root =", round(x_current, decimal_places), "\n")
+ 
+  return(x_current)
+}
+```
+ 
+# Test Cases
+ 
+## Test Case 1: Newton's Method Converges in the First Iteration
+ 
+```{r}
+f1 <- function(x) {
+  x^2 - 4
+}
+ 
+rootfinder(f1, 2.01, 2)
+```
+ 
+## Test Case 2: Newton's Method Does Not Converge Immediately
+ 
+```{r}
+f2 <- function(x) {
+  x^3 - 2*x - 5
+}
+ 
+rootfinder(f2, 2, 4)
+```
+ 
+## Test Case 3: Multiple Secant Iterations
+ 
+```{r}
+f3 <- function(x) {
+  x^3 - x - 1
+}
+ 
+rootfinder(f3, 1, 6)
+```
+# User Input Wrapper
+```{r}
+rootfinder_input <- function() {
+ 
+  function_text <- readline("Enter the function f(x): ")
+ 
+  f <- eval(parse(text = paste0("function(x) {", function_text, "}")))
+ 
+  x0 <- as.numeric(readline("Enter the initial value x0: "))
+ 
+  decimal_places <- as.integer(
+    readline("Enter the number of decimal places: ")
+  )
+ 
+  rootfinder(f, x0, decimal_places)
+}
+ 
+rootfinder_input()
+```
+ 
+ 
+# Explanation
+ 
+If Newton’s Method converges in the first iteration, the program outputs the initial value, the first Newton approximation, and the calculated root. This means that the first approximation has already reached the required decimal accuracy, so the program stops immediately and does not proceed to the Secant Method.
+ 
+If Newton’s Method does not converge in the first iteration, the program uses the first two approximations as the starting values for the Secant Method. It continues calculating new approximations until two consecutive values are equal to the required number of decimal places.
